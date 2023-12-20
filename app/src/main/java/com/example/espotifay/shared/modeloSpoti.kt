@@ -32,7 +32,9 @@ class ExoPlayerViewModel : ViewModel() {
         Cancion("KILL YOU - EMINEM", R.drawable.kilyu, R.raw.killyu),
         Cancion("TOOK HER TO THE O - KING VON", R.drawable.tookher, R.raw.kingvon),
         Cancion("ALREADY RICH - YEAT", R.drawable.arleady, R.raw.yeat),
-        Cancion("OPPA STOPPA - YBN NAHMIR", R.drawable.pene, R.raw.oppastoppa)
+        Cancion("OPPA STOPPA - YBN NAHMIR", R.drawable.pene, R.raw.oppastoppa),
+        Cancion("REEL IT IN - AMINÉ", R.drawable.reel, R.raw.reel),
+        Cancion("PSA - KAY FLOCK", R.drawable.psa, R.raw.psa)
     )
     private val _actual = MutableStateFlow(listaCanciones[0])
     val actual = _actual.asStateFlow()
@@ -45,6 +47,8 @@ class ExoPlayerViewModel : ViewModel() {
 
     private val _repetir = MutableStateFlow(false)
     val repetir = _repetir.asStateFlow()
+    private val _random = MutableStateFlow(false)
+    val random = _random.asStateFlow()
 
     private var currentSongIndex = 0
 
@@ -95,38 +99,39 @@ class ExoPlayerViewModel : ViewModel() {
         _exoPlayer.value?.clearMediaItems()
 
         if (repetir.value) {
-            // Repetir la misma canción
             _exoPlayer.value?.setMediaItem(MediaItem.fromUri(obtenerRuta(context, _actual.value.rawResId)))
             _exoPlayer.value?.prepare()
             _exoPlayer.value?.playWhenReady = true
         } else {
-            // Cambiar a la siguiente canción
-            currentSongIndex = (currentSongIndex + 1) % listaCanciones.size
+            if (_random.value) {
+                var randomIndex: Int
+                do {
+                    randomIndex = (listaCanciones.indices - currentSongIndex).random()
+                } while (randomIndex == currentSongIndex)
+
+                currentSongIndex = randomIndex
+            } else {
+                currentSongIndex = (currentSongIndex + 1) % listaCanciones.size
+            }
+
             _actual.value = listaCanciones[currentSongIndex]
 
             _exoPlayer.value?.setMediaItem(MediaItem.fromUri(obtenerRuta(context, _actual.value.rawResId)))
             _exoPlayer.value?.prepare()
             _exoPlayer.value?.playWhenReady = true
+
+            if (!repetir.value && currentSongIndex == listaCanciones.size - 1) {
+                currentSongIndex = 0
+            }
         }
     }
-
 
     fun toglearRepetir() {
         _repetir.value = !_repetir.value
     }
 
-
-    fun elegirCancionAleatoria(context: Context) {
-        _exoPlayer.value!!.stop()
-        _exoPlayer.value!!.clearMediaItems()
-
-        val randomIndex = (listaCanciones.indices - currentSongIndex).random()
-        currentSongIndex = randomIndex
-        _actual.value = listaCanciones[currentSongIndex]
-
-        _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context, _actual.value.rawResId)))
-        _exoPlayer.value!!.prepare()
-        _exoPlayer.value!!.playWhenReady = true
+    fun toglearRandom() {
+        _random.value = !_random.value
     }
 
     fun retrocederCancion(context: Context) {

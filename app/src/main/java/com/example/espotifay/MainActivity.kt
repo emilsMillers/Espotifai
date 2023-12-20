@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.espotifay.shared.ExoPlayerViewModel
 import com.example.espotifay.ui.theme.EspotifayTheme
+import kotlinx.coroutines.flow.collect
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,11 +144,11 @@ fun Espoti() {
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { exoPlayerViewModel.elegirCancionAleatoria(contexto) },
+                onClick = { exoPlayerViewModel.toglearRandom() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 modifier = Modifier.shadow(1.dp, shape = CircleShape)
             ) {
-                Icon(Icons.Default.Shuffle, contentDescription = "Random", tint = Color.Black)
+                Icon(Icons.Default.Shuffle, contentDescription = "Random", tint = if (exoPlayerViewModel.random.value) Color.Green else Color.Black)
             }
             Button(
                 onClick = { exoPlayerViewModel.retrocederCancion(contexto) },
@@ -164,7 +165,12 @@ fun Espoti() {
                 onClick = { exoPlayerViewModel.PausarOSeguirMusica() },
                 modifier = Modifier.shadow(15.dp, shape = MaterialTheme.shapes.medium)
             ) {
-                Icon(Icons.Default.PlayArrow, contentDescription = "Pause", tint = Color.Black)
+                val isPlaying = exoPlayerViewModel.exoPlayer.value?.isPlaying ?: false
+                if (isPlaying) {
+                    Icon(Icons.Default.Pause, contentDescription = "Pause", tint = Color.Black)
+                } else {
+                    Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = Color.Black)
+                }
             }
             Button(
                 onClick = { exoPlayerViewModel.CambiarCancion(contexto) },
