@@ -141,18 +141,6 @@ class ExoPlayerViewModel : ViewModel() {
         _exoPlayer.value!!.playWhenReady = true
     }
 
-    fun repetirCancion(context: Context) {
-        // Asegurarse de que se ha detenido y limpiado el reproductor antes de repetir
-        _exoPlayer.value?.stop()
-        _exoPlayer.value?.clearMediaItems()
-
-        _actual.value = listaCanciones[currentSongIndex]
-
-        _exoPlayer.value?.setMediaItem(MediaItem.fromUri(obtenerRuta(context, _actual.value.rawResId)))
-        _exoPlayer.value?.prepare()
-        _exoPlayer.value?.playWhenReady = true
-    }
-
     fun irAPosicion(nuevaPosicion: Int) {
         _exoPlayer.value?.seekTo(nuevaPosicion.toLong())
     }

@@ -26,6 +26,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -109,7 +111,14 @@ fun Espoti() {
                 exoPlayerViewModel.irAPosicion(nuevaPosicion.toInt())
             },
             valueRange = 0f..duracion.toFloat(),
-            steps = 100
+            steps = 100,
+            colors = SliderDefaults.colors(
+                thumbColor = Color(250, 110, 100),
+                activeTickColor = Color(250, 110, 100),
+                activeTrackColor = Color(250, 110, 100),
+                inactiveTickColor = Color.Gray,
+                inactiveTrackColor = Color.Gray
+            )
         )
 
         Row(
